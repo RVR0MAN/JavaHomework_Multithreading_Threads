@@ -7,6 +7,7 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) throws InterruptedException {
+        boolean started = false;
         String[] texts = new String[25];
         for (int i = 0; i < texts.length; i++) {
             texts[i] = generateText("aab", 30_000);
@@ -40,16 +41,19 @@ public class Main {
                     })
             );
         }
-        for (Thread thread : threads) {
-            thread.start();
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                System.out.println("Поток " + thread.getName() + " завершён");
-            }
+
+        for(Thread threadJoin:threads){
+
+           if(!started) {
+               for (Thread threadStart : threads) {
+                   threadStart.start();
+               }
+               started = true;
+           }
+
+           threadJoin.join();
         }
+
 
         long endTs = System.currentTimeMillis(); // end time
 
